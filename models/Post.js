@@ -25,9 +25,10 @@ Post.init(
       },
     },
     user_id: {
-      //foreign key
+      //defines foreign key
       type: DataTypes.INTEGER,
       references: {
+        //lowercase user referencing model name given in model attribute params
         model: "user",
         key: "id",
       },

@@ -67,6 +67,7 @@ User.init(
         return updatedUserData;
       },
     },
+    //model attributes
     sequelize,
     timestamps: false,
     freezeTableName: true,
