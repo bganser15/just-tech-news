@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { User } = require("../../models");
+const { User, Post, Vote } = require("../../models");
 
 // GET /api/users
 router.get("/", (req, res) => {
@@ -14,14 +14,27 @@ router.get("/", (req, res) => {
       res.status(500).json(err);
     });
 });
-// GET /api/users/1
+// GET /api/users/id
 router.get("/:id", (req, res) => {
   User.findOne({
     //excludes password from get request
-    attributes: { exclude: ["password"] },
+    //attributes: { exclude: ["password"] },
     where: {
       id: req.params.id,
     },
+    // replace the existing `include` with this
+    include: [
+      {
+        model: Post,
+        attributes: ["id", "title", "post_url", "created_at"],
+      },
+      {
+        model: Post,
+        attributes: ["title"],
+        through: Vote,
+        as: "voted_posts",
+      },
+    ],
   })
     .then((dbUserData) => {
       if (!dbUserData) {
@@ -63,8 +76,6 @@ router.post("/login", (req, res) => {
       res.status(400).json({ message: "No user with that email address!" });
       return;
     }
-
-    //res.json({ user: dbUserData });
 
     // Verify user
     const validPassword = dbUserData.checkPassword(req.body.password);
