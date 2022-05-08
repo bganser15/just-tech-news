@@ -5,6 +5,7 @@ const { Post, User, Comment } = require("../models");
 //Get homepage with all posts using sequelize models
 
 router.get("/", (req, res) => {
+  console.log(req.session);
   Post.findAll({
     attributes: [
       "id",
@@ -43,8 +44,13 @@ router.get("/", (req, res) => {
       res.status(500).json(err);
     });
 });
-//login route
+//login route..if user is logged in redirect to the homepage if not redirect to login page
 router.get("/login", (req, res) => {
+  if (req.session.loggedIn) {
+    res.redirect("/");
+    return;
+  }
+
   res.render("login");
 });
 module.exports = router;
