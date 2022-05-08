@@ -5,7 +5,6 @@ const { Post, User, Comment } = require("../models");
 //Get homepage with all posts using sequelize models
 
 router.get("/", (req, res) => {
-  console.log(req.session);
   Post.findAll({
     attributes: [
       "id",
@@ -37,7 +36,10 @@ router.get("/", (req, res) => {
     .then((dbPostData) => {
       //creates an array of all the posts and serializes the data with plain: true
       const posts = dbPostData.map((post) => post.get({ plain: true }));
-      res.render("homepage", { posts });
+      res.render("homepage", {
+        posts,
+        loggedIn: req.session.loggedIn,
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -97,7 +99,10 @@ router.get("/post/:id", (req, res) => {
       const post = dbPostData.get({ plain: true });
 
       // pass data to template
-      res.render("single-post", { post });
+      res.render("single-post", {
+        post,
+        loggedIn: req.session.loggedIn,
+      });
     })
     .catch((err) => {
       console.log(err);
